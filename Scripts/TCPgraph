@@ -1,0 +1,11 @@
+set term png font "Times, 10"
+set output "../plots/tcp_throughput.png"
+set title "TCP throughput vs Bandwidth
+set auto x
+set yrange [0:120]
+set style data histogram
+set style histogram cluster gap 1
+set style fill solid border -1
+set boxwidth 0.9
+set xtic rotate by -45 scale 0
+plot '../data/tcp.txt' using 2:xtic(1) ti col, '' u 3 ti col, '' u 4 ti col

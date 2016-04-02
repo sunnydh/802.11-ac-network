@@ -1,0 +1,7 @@
+set term png font "Times, 10"
+set output "/home/sunman/Desktop/btp/plots/udp_throughput.png"
+set title "Throughput vs Data Rate(Mbps) for various bandwidths"
+set xlabel "Data Rate(Mbps)"
+set ylabel "Throughput(Mbps)"
+plot "/home/sunman/Desktop/btp/scripts/data.dat" using 1:2 title '2GHz-20MHz' with linespoints, "/home/sunman/Desktop/btp/scripts/data2.dat" using 1:2 title '2GHz-40MHz' with linespoints, "/home/sunman/Desktop/btp/scripts/data3.dat" using 1:2 title '5GHz-20MHz' with linespoints, "/home/sunman/Desktop/btp/scripts/data4.dat" using 1:2 title '5GHz-40MHz' with linespoints, "/home/sunman/Desktop/btp/scripts/data5.dat" using 1:2 title '5GHz-80MHz' with linespoints
+
