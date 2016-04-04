@@ -12,6 +12,7 @@
 #include <netinet/tcp.h>
 #include <netdb.h> 
 #include <sys/time.h>
+#include <fcntl.h>
 
 #define BUFSIZE 1024
 
@@ -80,22 +81,33 @@ int main(int argc, char **argv) {
     if (connect(sockfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) < 0) 
       error("ERROR connecting");
 
+    printf("Connection with server established. Now beginning to transfer file\n");
 
     //Time now to send a large file
-    FILE *fp = fopen("/home/sanket/Downloads/thor.mkv", "rb");
+    //int fp = open("/home/sanket/Downloads/Timeline.pdf", O_RDONLY, 0644);
+    FILE *fp = fopen("/home/sanket/Downloads/sanket.txt", "r");
     if(fp == NULL){
         printf("File open error\n");
         return 0;
     }
-    int sent_block;
+    int sent_block, transfer;
     struct timeval start_time, end_time;
     get_now(&start_time, opt_debug);
-    while(sent_block = fread(buf, sizeof(char), BUFSIZE, fp) > 0){
-        if(send(sockfd, buf, sent_block, 0) < 0){
+    //buf = "I am client and I am awesome";
+    /*int buf_size = 28;
+    transfer = send(sockfd, buf, buf_size, 0);
+    printf("%u\n", transfer);
+    printf("Sent\n");*/
+    printf("%u\n", BUFSIZE);
+    while(sent_block = fread(buf, 1, BUFSIZE, fp) > 0){
+        printf("%d\n", sent_block);
+        printf("LOL\n");
+        if(transfer = send(sockfd, buf, sent_block, 0) < 0){
             printf("Error in sending file\n");
             break;
         }
-        bzero(buf, BUFSIZE);
+        printf("%d\n", transfer);
+        //bzero(buf, BUFSIZE);
         //Use get sock opt to get tcp parameters at this point of time
         tcp_info_length = sizeof(tcp_info);
         get_now(&end_time, opt_debug);
