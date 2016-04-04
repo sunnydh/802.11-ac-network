@@ -1,3 +1,17 @@
+/*
+
+Build instructions
+
+g++ -o server.o tcp_server.cpp
+./server.o 192.168.1.1 3300 2-20
+
+Output
+
+Server_stats.txt in Server_out folder
+format of file in fprintf statement below
+
+*/
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -22,7 +36,6 @@
 #define BUFFER_SIZE 1024
 
 
-
 // Get current time.
 void get_now( struct timeval *time, unsigned short debug ) {
 	if ( gettimeofday( time, NULL ) != 0 ) {
@@ -44,7 +57,7 @@ double time_to_seconds ( struct timeval *tstart, struct timeval *tfinish ) {
 int main(int argc, char **argv)
 {
 	if(argc<4){
-		printf("Less no of arguments [file.o] [IP] [port] required\n");
+		printf("Less no of arguments [file.o] [IP] [port] [2-20|2-40|5-20|5-40|5-80] required\n");
 		return 0;	
 	}
 
@@ -109,7 +122,7 @@ int main(int argc, char **argv)
 			struct tcp_info tcp_info;
 
 			tcp_buffer = malloc(opt_buffer*sizeof(char));
-			statistics = fopen( "/home/sunman/Desktop/btp/802.11-ac-network/Sockets/Serever_stats.txt", "a+");
+			statistics = fopen( "/home/sunman/Desktop/btp/802.11-ac-network/Sockets/Server_out/Server_stats.txt", "a+");
 			fp = fopen("/home/sunman/Downloads/ca.mkv","w+");
 
 			fprintf(statistics,"File transfer start for %s\n",argv[3]);
