@@ -84,8 +84,12 @@ int main(int argc, char **argv) {
     printf("Connection with server established. Now beginning to transfer file\n");
 
     //Time now to send a large file
+<<<<<<< HEAD
     //int fp = open("/home/sanket/Downloads/Timeline.pdf", O_RDONLY, 0644);
     FILE *fp = fopen("/home/sanket/Downloads/sanket.txt", "r");
+=======
+    FILE *fp = fopen("~/Downloads/thor.mkv", "rb");
+>>>>>>> afd331da2c23acfa9d7272e380ec14c60a424d40
     if(fp == NULL){
         printf("File open error\n");
         return 0;
