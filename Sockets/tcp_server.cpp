@@ -20,7 +20,7 @@
 
 
 
-#define MYPORT 3490 // the port users will be connecting to
+
 #define BACKLOG 10 // how many pending connections queue will hold
 #define BUFFER_SIZE 1024
 
@@ -141,16 +141,22 @@ double time_to_seconds ( struct timeval *tstart, struct timeval *tfinish ) {
 
 
 
-int main(void)
+int main(int argc, char **argv)
 {
+	if(argc<3){
+		printf("Less no of arguments [file.o] [IP] [port] required\n");
+		return 0;	
+	}
+
+
+
 	int sockfd, new_fd; // listen on sock_fd, new connection on new_fd
 	struct sockaddr_in my_addr; // my address information
 	struct sockaddr_in their_addr; // connector’s address information
-	int sin_size;
 	struct sigaction sa;
 	int yes=1;
 	int opt_buffer, opt_debug=0;
-	int tcp_info_length;
+	
 
 	/* Structures needed for measuring time intervals */
 	struct timeval time_start, time_now, time_delta;
@@ -172,9 +178,10 @@ int main(void)
 
 	// binding
 	my_addr.sin_family = AF_INET; // host byte order
-	my_addr.sin_port = htons(MYPORT); // short, network byte order
-	my_addr.sin_addr.s_addr = INADDR_ANY; // automatically fill with my IP
-	memset(&(my_addr.sin_zero), ’\0’, 8); // zero the rest of the struct
+	my_addr.sin_port = htons(atoi(argv[2])); // short, network byte order
+	inet_aton(argv[1], &(my_addr.sin_addr)); // fill with my IP
+	// my_addr.sin_addr.s_addr = INADDR_ANY; // automatically fill with my IP
+	memset(&(my_addr.sin_zero), '0', 8); // zero the rest of the struct
 	if (bind(sockfd, (struct sockaddr *)&my_addr, sizeof(struct sockaddr))== -1) {
 		perror("bind");
 		exit(1);
@@ -188,8 +195,8 @@ int main(void)
 
 	while(1) { 
 		// main accept() loop
-		sin_size = sizeof(struct sockaddr_in);
-		if ((new_fd = accept(sockfd, (struct sockaddr *)&their_addr,&sin_size)) == -1){
+		unsigned int sin_size = sizeof(struct sockaddr_in);
+		if ((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, &sin_size)) == -1){
 			perror("accept");
 			continue;
 		}
@@ -208,18 +215,19 @@ int main(void)
 			// 	printf("Recieved %d bytes\n",recvd);
 			// }
 
-			char *tcp_buffer;
-			tcp_buffer = malloc(opt_buffer);
+			void *tcp_buffer;
+			tcp_buffer = malloc(opt_buffer*sizeof(char));
 			struct tcp_info tcp_info;
+			int recv_bytes;
 			FILE *statistics;
 			
-			statistics = fopen( opt_filename, "a+" );
+			statistics = fopen( "./Serever_stats.txt", "a+" );
 			get_now( &time_start, opt_debug );
 			while ( (recv_bytes = recv( new_fd, tcp_buffer, opt_buffer, 0 ) ) > 0 ) {
 				/* Measure time in order to create time intervals. */
 				get_now( &time_now, opt_debug );
 				/* Fill tcp_info structure with data */
-				tcp_info_length = sizeof(tcp_info);
+				unsigned int tcp_info_length = sizeof(tcp_info);
 				if ( getsockopt( new_fd, SOL_TCP, TCP_INFO, (void *)&tcp_info, &tcp_info_length ) == 0 ) {
 					fprintf(statistics,"%.6f %u %u %u %u %u %u %u %u %u %u %u %u\n",
 							time_to_seconds( &time_start, &time_now ),

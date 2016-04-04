@@ -82,7 +82,7 @@ int main(int argc, char **argv) {
 
 
     //Time now to send a large file
-    FILE *fp = fopen("/home/sanket/Downloads/thor.mkv", "rb");
+    FILE *fp = fopen("~/Downloads/thor.mkv", "rb");
     if(fp == NULL){
         printf("File open error\n");
         return 0;
