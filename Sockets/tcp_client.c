@@ -16,14 +16,6 @@
 
 #define BUFSIZE 1024
 
-/* 
- * error - wrapper for perror
- */
-void error(char *msg) {
-    perror(msg);
-    exit(0);
-}
-
 /* Get current time. */
 void get_now( struct timeval *time, unsigned short debug ) {
     if ( gettimeofday( time, NULL ) != 0 ) {
@@ -42,19 +34,25 @@ double time_to_seconds ( struct timeval *tstart, struct timeval *tfinish ) {
 
 
 int main(int argc, char **argv) {
-    int sockfd, portno, n, tcp_info_length;
-    struct sockaddr_in serveraddr;
-    struct hostent *server;
-    char *hostname;
-    char buf[BUFSIZE];
-    struct tcp_info tcp_info;
-    unsigned short opt_debug;
+
+    int sockfd, portno, n, tcp_info_length;         //sockfd: socket file descriptor, tcp_info_length: length of structure for storing tcp parameters returned by getsockopt
+    struct sockaddr_in serveraddr;                  //Server address 
+    struct hostent *server;                         //structure storing the name converted host
+    char *hostname;                                 //For storing host name
+    char buf[BUFSIZE];                              //Buffer for storing the data to be transmitted
+    struct tcp_info tcp_info;                       //structure for storing tcp parameters returned by getsockopt
+    unsigned short opt_debug;                       //debug variable to be used
+    int read_block;                                 //Stores the block of data read at a time from the file
+    struct timeval start_time, end_time;            //start_time: time(in secs) when file transfer has been initiated, end_time: time when the block is sent
+
 
     /* check command line arguments */
     if (argc != 3) {
        fprintf(stderr,"usage: %s <hostname> <port>\n", argv[0]);
        exit(0);
     }
+
+    /* get host name and port number of server */
     hostname = argv[1];
     portno = atoi(argv[2]);
 
@@ -81,47 +79,45 @@ int main(int argc, char **argv) {
     if (connect(sockfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) < 0) 
       error("ERROR connecting");
 
-    printf("Connection with server established. Now beginning to transfer file\n");
 
     //Time now to send a large file
-
-
-    FILE *fp = fopen("/home/sanket/Downloads/sanket.txt", "r");
+    /* First open the file in read mode */
+    FILE *fp = fopen("/home/sanket/Downloads/ca.mkv", "r");
     if(fp == NULL){
         printf("File open error\n");
         return 0;
     }
-    int sent_block, transfer;
-    struct timeval start_time, end_time;
+    /* File to write the output TCP parameters */
+    //FILE *fp_out = fopen("/home/sanket/")
+
+    /* Get the time when the file transfer is initiated */
     get_now(&start_time, opt_debug);
-    //buf = "I am client and I am awesome";
-    /*int buf_size = 28;
-    transfer = send(sockfd, buf, buf_size, 0);
-    printf("%u\n", transfer);
-    printf("Sent\n");*/
-    printf("%u\n", BUFSIZE);
-    while(sent_block = fread(buf, 1, BUFSIZE, fp) > 0){
-        printf("%d\n", sent_block);
-        printf("LOL\n");
-        if(transfer = send(sockfd, buf, sent_block, 0) < 0){
+    
+    /* Read one block at a time and send it to socket */
+    while((read_block = fread(buf, 1, BUFSIZE, fp)) > 0){
+
+        if(send(sockfd, buf, read_block, 0) < 0){
             printf("Error in sending file\n");
             break;
         }
-        printf("%d\n", transfer);
-        //bzero(buf, BUFSIZE);
+        bzero(buf, BUFSIZE);
+
         //Use get sock opt to get tcp parameters at this point of time
         tcp_info_length = sizeof(tcp_info);
         get_now(&end_time, opt_debug);
         int ret_sock = getsockopt(sockfd, SOL_TCP, TCP_INFO, (void *)&tcp_info, (socklen_t *)&tcp_info_length);
         if(ret_sock == 0){
-            printf("%.6f\t%u\n", time_to_seconds(&start_time, &end_time), tcp_info.tcpi_snd_cwnd);
+            printf("%.6f\t%u\t%u\t%u\n", time_to_seconds(&start_time, &end_time), tcp_info.tcpi_snd_cwnd, tcp_info.tcpi_snd_ssthresh, tcp_info.tcpi_snd_rtt);
         }
         else{
             printf("Error in get sock opt\n");
             break;
         }
     }
+
+    /*And finally time to close the file and the socket */
     fclose(fp);
     close(sockfd);
+
     return 0;
 }
