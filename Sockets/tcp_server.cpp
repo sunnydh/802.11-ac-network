@@ -220,10 +220,16 @@ int main(int argc, char **argv)
 			struct tcp_info tcp_info;
 			int recv_bytes;
 			FILE *statistics;
-			
-			statistics = fopen( "./Serever_stats.txt", "a+" );
+			FILE *fp;
+			statistics = fopen( "/home/sunman/Desktop/btp/802.11-ac-network/Sockets/Serever_stats.txt", "w+" );
+			fp = fopen("/home/sunman/Downloads/temp.txt","w+");
+
+			printf("File transfer start\n");
+
 			get_now( &time_start, opt_debug );
 			while ( (recv_bytes = recv( new_fd, tcp_buffer, opt_buffer, 0 ) ) > 0 ) {
+				printf("No of recv bytes %d\n", recv_bytes);
+				fwrite(tcp_buffer,recv_bytes,1,fp);
 				/* Measure time in order to create time intervals. */
 				get_now( &time_now, opt_debug );
 				/* Fill tcp_info structure with data */
@@ -249,7 +255,11 @@ int main(int argc, char **argv)
 					}
 				}
 			}
+			printf("File transfer ends\n");
+			free(tcp_buffer);
 			close(new_fd);
+			fclose(fp);
+			fclose(statistics);
 			exit(0);
 		}
 		close(new_fd); // parent doesn’t need this
