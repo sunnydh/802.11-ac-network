@@ -88,7 +88,11 @@ int main(int argc, char **argv) {
         return 0;
     }
     /* File to write the output TCP parameters */
-    //FILE *fp_out = fopen("/home/sanket/")
+    FILE *fp_out = fopen("/home/sanket/Documents/BTP/802.11-ac-network/Sockets/Client_out/2.4_20/stats2.txt", "w+");
+    if(fp_out == NULL){
+        printf("Output file open error\n");
+        return 0;
+    }
 
     /* Get the time when the file transfer is initiated */
     get_now(&start_time, opt_debug);
@@ -107,7 +111,7 @@ int main(int argc, char **argv) {
         get_now(&end_time, opt_debug);
         int ret_sock = getsockopt(sockfd, SOL_TCP, TCP_INFO, (void *)&tcp_info, (socklen_t *)&tcp_info_length);
         if(ret_sock == 0){
-            printf("%.6f\t%u\t%u\t%u\n", time_to_seconds(&start_time, &end_time), tcp_info.tcpi_snd_cwnd, tcp_info.tcpi_snd_ssthresh, tcp_info.tcpi_snd_rtt);
+            fprintf(fp_out, "%.6f\t%u\t%u\t%u\n", time_to_seconds(&start_time, &end_time), tcp_info.tcpi_snd_cwnd, tcp_info.tcpi_snd_ssthresh, tcp_info.tcpi_rtt);
         }
         else{
             printf("Error in get sock opt\n");
@@ -118,6 +122,7 @@ int main(int argc, char **argv) {
     /*And finally time to close the file and the socket */
     fclose(fp);
     close(sockfd);
+    fclose(fp_out);
 
     return 0;
 }
