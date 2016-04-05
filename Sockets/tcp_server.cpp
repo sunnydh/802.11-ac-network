@@ -122,7 +122,7 @@ int main(int argc, char **argv)
 			struct tcp_info tcp_info;
 
 			tcp_buffer = malloc(opt_buffer*sizeof(char));
-			statistics = fopen( "/home/sunman/Desktop/btp/802.11-ac-network/Sockets/Server_out/Server_stats.txt", "a+");
+			statistics = fopen( "/home/sunman/Desktop/btp/802.11-ac-network/Sockets/Server_out/2.4_20/Server_stats2.txt", "w+");
 			fp = fopen("/home/sunman/Downloads/ca.mkv","w+");
 
 			fprintf(statistics,"File transfer start for %s\n",argv[3]);
