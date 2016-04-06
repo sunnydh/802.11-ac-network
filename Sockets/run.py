@@ -27,12 +27,13 @@ def main():
 	f_out = open("tcpdumpSTDOUT", "w")
 	f_err = open("tcpdumpSTDERR", "w")
 
-	cmd = "sudo tcpdump -n -s0 -w myPackets"+ str(run) +".pcap -i eth0"
-	ip = "192.168.1.1"
+	cmd = "sudo tcpdump -n -s0 -w /home/susan/Desktop/BTP/Client/2.4_20/trace"+ str(run) +".pcap -i wlan2"
+	ip = "192.168.1.2"
 	port = "3300"
 
 	first = subprocess.Popen(shlex.split(cmd), stderr=f_err, stdout = f_out)
-	second = subprocess.Popen(['/home/sunman/Desktop/client.o', ip, port, str(run)])
+	time.sleep(2)
+	second = subprocess.Popen(['/home/susan/Desktop/BTP/802.11-ac-network/Sockets/client.o', ip, port, str(run)])
 
 	print "Waiting for process 2..."		
 	

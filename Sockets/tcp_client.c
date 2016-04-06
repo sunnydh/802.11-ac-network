@@ -1,6 +1,6 @@
 /* 
  * tcpclient.c - A simple TCP client
- * usage: tcpclient <host> <port>
+ * usage: tcpclient <host> <port> <run_number>
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -13,6 +13,7 @@
 #include <netdb.h> 
 #include <sys/time.h>
 #include <fcntl.h>
+#include <string.h>
 
 #define BUFSIZE 1024
 
@@ -47,7 +48,7 @@ int main(int argc, char **argv) {
 
 
     /* check command line arguments */
-    if (argc != 3) {
+    if (argc != 4) {
        fprintf(stderr,"usage: %s <hostname> <port>\n", argv[0]);
        exit(0);
     }
@@ -82,13 +83,19 @@ int main(int argc, char **argv) {
 
     //Time now to send a large file
     /* First open the file in read mode */
-    FILE *fp = fopen("/home/sanket/Downloads/ca.mkv", "r");
+    FILE *fp = fopen("/home/susan/Downloads/1.jpg", "r");
     if(fp == NULL){
         printf("File open error\n");
         return 0;
     }
     /* File to write the output TCP parameters */
-    FILE *fp_out = fopen("/home/sanket/Documents/BTP/802.11-ac-network/Sockets/Client_out/2.4_20/stats2.txt", "w+");
+    char filepath[1024];
+    filepath[0]='\0';
+    strcat(filepath,"/home/susan/Desktop/BTP/Client/2.4_20/stats");
+    strcat(filepath,argv[3]);
+    strcat(filepath,".txt");
+
+    FILE *fp_out = fopen(filepath, "w+");
     if(fp_out == NULL){
         printf("Output file open error\n");
         return 0;
