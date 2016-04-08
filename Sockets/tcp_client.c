@@ -36,7 +36,7 @@ double time_to_seconds ( struct timeval *tstart, struct timeval *tfinish ) {
 
 int main(int argc, char **argv) {
 
-    int sockfd, portno, n, tcp_info_length;         //sockfd: socket file descriptor, tcp_info_length: length of structure for storing tcp parameters returned by getsockopt
+    int sockfd, portno, n, tcp_info_length, i;         //sockfd: socket file descriptor, tcp_info_length: length of structure for storing tcp parameters returned by getsockopt
     struct sockaddr_in serveraddr;                  //Server address 
     struct hostent *server;                         //structure storing the name converted host
     char *hostname;                                 //For storing host name
@@ -83,11 +83,11 @@ int main(int argc, char **argv) {
 
     //Time now to send a large file
     /* First open the file in read mode */
-    FILE *fp = fopen("/home/susan/Downloads/1.jpg", "r");
-    if(fp == NULL){
-        printf("File open error\n");
-        return 0;
-    }
+    // FILE *fp = fopen("/home/susan/Downloads/1.jpg", "r");
+    // if(fp == NULL){
+    //     printf("File open error\n");
+    //     return 0;
+    // }
     /* File to write the output TCP parameters */
     char filepath[1024];
     filepath[0]='\0';
@@ -103,11 +103,15 @@ int main(int argc, char **argv) {
         return 0;
     }
 
+    for(i = 0; i < BUFSIZE; i++)
+    	buf[i] = '1';
+
     /* Get the time when the file transfer is initiated */
     get_now(&start_time, opt_debug);
     
     /* Read one block at a time and send it to socket */
-    while((read_block = fread(buf, 1, BUFSIZE, fp)) > 0){
+    i = 1;
+    while(i <= 1000000){
 
         if(send(sockfd, buf, read_block, 0) < 0){
             printf("Error in sending file\n");
@@ -126,10 +130,11 @@ int main(int argc, char **argv) {
             printf("Error in get sock opt\n");
             break;
         }
+        i++;
     }
 
     /*And finally time to close the file and the socket */
-    fclose(fp);
+    //fclose(fp);
     close(sockfd);
     fclose(fp_out);
 
