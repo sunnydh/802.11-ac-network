@@ -27,13 +27,13 @@ def main(run):
 	f_out = open("tcpdumpSTDOUT", "w")
 	f_err = open("tcpdumpSTDERR", "w")
 
-	cmd = "sudo tcpdump -n -s0 -w /home/susan/Desktop/BTP/Client/2.4_20/trace"+ str(run) +".pcap -i wlan2"
+	cmd = "sudo tcpdump -n -s0 -w /home/susan/Desktop/BTP/Server/2.4_20/trace"+ str(run) +".pcap -i wlan2"
 	ip = "192.168.1.2"
 	port = "3300"
 
 	first = subprocess.Popen(shlex.split(cmd), stderr=f_err, stdout=f_out)
 	time.sleep(2)	
-	second = subprocess.Popen(['/home/susan/Desktop/BTP/802.11-ac-network/Sockets/client.o', ip, port, '2.4_20', str(run)])
+	second = subprocess.Popen(['/home/susan/Desktop/BTP/802.11-ac-network/Sockets/server.o', ip, port, '2.4_20', str(run)])
 	
 	second.wait()
 	os.system("sudo kill %s" % (first.pid, ))
@@ -53,4 +53,4 @@ if __name__ == '__main__':
 
 	for i range(1,21):
 		main(i)
-		time.sleep(300)
+		time.sleep(10)

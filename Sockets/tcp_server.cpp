@@ -3,7 +3,8 @@
 Build instructions
 
 g++ -o server.o tcp_server.cpp
-./server.o 192.168.1.1 3300 2-20
+usage: tcpclient <host> <port> <folder(2.4-20)> <run_number>
+./server.o 192.168.1.2 3300 2-20 1
 
 Output
 
@@ -56,18 +57,17 @@ double time_to_seconds ( struct timeval *tstart, struct timeval *tfinish ) {
 
 int main(int argc, char **argv)
 {
-	if(argc<4){
-		printf("Less no of arguments [file.o] [IP] [port] [2-20|2-40|5-20|5-40|5-80] required\n");
+	if(argc<5){
+		printf("Less no of arguments [file.o] [IP] [port] [2-20|2-40|5-20|5-40|5-80] [run] required\n");
 		return 0;	
 	}
 
 	int sockfd, new_fd, opt_buffer, opt_debug=0, yes=1; // listen on sock_fd, new connection on new_fd
 	struct sockaddr_in my_addr; // my address information
 	struct sockaddr_in their_addr; // connector’s address information
-	struct sigaction sa;
 
 	/* Structures needed for measuring time intervals */
-	struct timeval time_start, time_now, time_delta;
+	struct timeval time_start, time_now;
 
 
 	opt_buffer = BUFFER_SIZE;
@@ -109,29 +109,39 @@ int main(int argc, char **argv)
 		}
 
 		printf("server: got connection from %s\n", inet_ntoa(their_addr.sin_addr));
+		int childPid = fork();
 
-		if (!fork()) { 
+		if (childPid == 0) { 
 			// this is the child process
 			close(sockfd); // child doesn’t need the listener
 
 			void *tcp_buffer;
 			int recv_bytes;
 			FILE *statistics;
-			FILE *fp;
+			// FILE *fp;
 			unsigned int tcp_info_length;
 			struct tcp_info tcp_info;
 
 			tcp_buffer = malloc(opt_buffer*sizeof(char));
-			statistics = fopen( "/home/sunman/Desktop/btp/802.11-ac-network/Sockets/Server_out/2.4_20/Server_stats2.txt", "w+");
-			fp = fopen("/home/sunman/Downloads/ca.mkv","w+");
 
-			fprintf(statistics,"File transfer start for %s\n",argv[3]);
-			printf("File transfer start for %s\n",argv[3]);
+			char filepath[1024];
+		    filepath[0]='\0';
+		    strcat(filepath,"/home/susan/Desktop/BTP/Server/");
+		    strcat(filepath,argv[3]);
+		    strcat(filepath,"/stats");
+		    strcat(filepath,argv[4]);
+		    strcat(filepath,".txt");
+
+			statistics = fopen( filepath, "w+");
+			// fp = fopen("/home/sunman/Downloads/ca.mkv","w+");
+
+			// fprintf(statistics,"File transfer start for %s\n",argv[3]);
+			printf("File transfer start for %s\n",argv[4]);
 
 			get_now( &time_start, opt_debug );
 			while ((recv_bytes = recv(new_fd, tcp_buffer, opt_buffer, 0)) > 0){
 				
-				fwrite(tcp_buffer,recv_bytes,1,fp);
+				// fwrite(tcp_buffer,recv_bytes,1,fp);
 				get_now( &time_now, opt_debug );
 				
 				tcp_info_length = sizeof(tcp_info);
@@ -160,15 +170,29 @@ int main(int argc, char **argv)
 				}
 			}
 
-			fprintf(statistics, "File transfer ends %s\n", argv[3]);
-			printf("File transfer ends %s\n", argv[3]);
+			// fprintf(statistics, "File transfer ends %s\n", argv[3]);
+			printf("File transfer ends %s\n", argv[4]);
 			free(tcp_buffer);
-			close(new_fd); fclose(fp); fclose(statistics);
+			close(new_fd);  fclose(statistics);
+			// fclose(fp);
 			exit(0);
 
 		}
 
 		close(new_fd); // parent doesn’t need this
+
+		//for single connection
+		int returnStatus;    
+    	waitpid(childPid, &returnStatus, 0);
+
+    	// Verify child process terminated without error.  
+    	if (returnStatus == 0)
+       		printf("The child process terminated normally.\n");
+
+    	if (returnStatus == 1)
+       		printf("The child process terminated with an error!.\n");
+
+       	break;
 	}
 
 	return 0;

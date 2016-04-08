@@ -1,6 +1,6 @@
 /* 
  * tcpclient.c - A simple TCP client
- * usage: tcpclient <host> <port> <run_number>
+ * usage: tcpclient <host> <port> <folder(2.4-20)> <run_number>
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -91,8 +91,10 @@ int main(int argc, char **argv) {
     /* File to write the output TCP parameters */
     char filepath[1024];
     filepath[0]='\0';
-    strcat(filepath,"/home/susan/Desktop/BTP/Client/2.4_20/stats");
+    strcat(filepath,"/home/susan/Desktop/BTP/Client/");
     strcat(filepath,argv[3]);
+    strcat(filepath"/stats");
+    strcat(filepath,argv[4]);
     strcat(filepath,".txt");
 
     FILE *fp_out = fopen(filepath, "w+");
