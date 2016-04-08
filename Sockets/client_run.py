@@ -7,22 +7,22 @@ import signal
 
 
 
-def main():
+def main(run):
 
-	run = 0
+	# run = 0
 
-	if (not(os.path.isfile("./run.txt"))):
-		with open("run.txt","w") as f:
-			f.write("1")
+	# if (not(os.path.isfile("./run.txt"))):
+	# 	with open("run.txt","w") as f:
+	# 		f.write("1")
 
-	with open("run.txt","r") as f:
-		run = int(f.readline())
+	# with open("run.txt","r") as f:
+	# 	run = int(f.readline())
 
 
 	with open("log.txt","a+") as f:
 		f.write("Start " + str(run) + "\n")
 
-	print "Starting process 1..."
+	print "Start ", run
 
 	f_out = open("tcpdumpSTDOUT", "w")
 	f_err = open("tcpdumpSTDERR", "w")
@@ -32,10 +32,8 @@ def main():
 	port = "3300"
 
 	first = subprocess.Popen(shlex.split(cmd), stderr=f_err, stdout = f_out)
-	time.sleep(2)
+	time.sleep(2)	
 	second = subprocess.Popen(['/home/susan/Desktop/BTP/802.11-ac-network/Sockets/client.o', ip, port, str(run)])
-
-	print "Waiting for process 2..."		
 	
 	second.wait()
 	os.system("sudo kill %s" % (first.pid, ))
@@ -45,9 +43,14 @@ def main():
 	with open("log.txt","a+") as f:
 		f.write("Complete " + str(run) + "\n")
 
-	run += 1
+	# run += 1
 	with open("run.txt","w") as f:
 		f.write(str(run))
 
+	print "End ", run
+
 if __name__ == '__main__':
-	main()
+
+	for i range(1,21):
+		main(i)
+		time.sleep(60)
