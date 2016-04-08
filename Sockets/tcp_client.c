@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
     filepath[0]='\0';
     strcat(filepath,"/home/susan/Desktop/BTP/Client/");
     strcat(filepath,argv[3]);
-    strcat(filepath"/stats");
+    strcat(filepath,"/stats");
     strcat(filepath,argv[4]);
     strcat(filepath,".txt");
 
