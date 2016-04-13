@@ -3,8 +3,8 @@
 Build instructions
 
 g++ -o server.o tcp_server.cpp
-usage: tcpclient <host> <port> <folder(2.4-20)> <run_number>
-./server.o 192.168.1.2 3300 2-20 1
+usage: server.o <host> <port> <path to stat file>
+
 
 Output
 
@@ -57,8 +57,8 @@ double time_to_seconds ( struct timeval *tstart, struct timeval *tfinish ) {
 
 int main(int argc, char **argv)
 {
-	if(argc<5){
-		printf("Less no of arguments [file.o] [IP] [port] [2-20|2-40|5-20|5-40|5-80] [run] required\n");
+	if(argc!=4){
+		printf("Less no of arguments [file.o] [IP] [port] [path to stat file] required\n");
 		return 0;	
 	}
 
@@ -126,11 +126,7 @@ int main(int argc, char **argv)
 
 			char filepath[1024];
 		    filepath[0]='\0';
-		    strcat(filepath,"/home/susan/Desktop/BTP/Server/");
 		    strcat(filepath,argv[3]);
-		    strcat(filepath,"/stats");
-		    strcat(filepath,argv[4]);
-		    strcat(filepath,".txt");
 
 			statistics = fopen( filepath, "w+");
 			// fp = fopen("/home/sunman/Downloads/ca.mkv","w+");
