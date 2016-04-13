@@ -1,6 +1,6 @@
 set term png font "Times, 10"
-set output "~/Documents/BTP/802.11-ac-network/Sockets/Plots/cwnd_tcp_5_80.png"
+set output "~/Documents/BTP/802.11-ac-network/Sockets/Plots/cwnd_tcp_2.4_20.png"
 set title "Congestion Window vs Time for a given channel bonding"
 set xlabel "Time (relative in sec)"
 set ylabel "Congestion Window"
-plot "~/Documents/BTP/802.11-ac-network/Sockets/Client_out/5_80/stats1.txt" using 1:2 with linespoints
+plot "~/Documents/BTP/Client/2.4_20/stats_avg.txt" using 1:2 with linespoints

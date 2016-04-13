@@ -1,6 +1,6 @@
 /* 
  * tcpclient.c - A simple TCP client
- * usage: tcpclient <host> <port> <folder(2.4-20)> <run_number>
+ * usage: tcpclient <host> <port> <path of stats file>
  */
 #include <stdio.h>
 #include <stdlib.h>
@@ -36,7 +36,7 @@ double time_to_seconds ( struct timeval *tstart, struct timeval *tfinish ) {
 
 int main(int argc, char **argv) {
 
-    int sockfd, portno, n, tcp_info_length, i;         //sockfd: socket file descriptor, tcp_info_length: length of structure for storing tcp parameters returned by getsockopt
+    int sockfd, portno, n, tcp_info_length, i;      //sockfd: socket file descriptor, tcp_info_length: length of structure for storing tcp parameters returned by getsockopt
     struct sockaddr_in serveraddr;                  //Server address 
     struct hostent *server;                         //structure storing the name converted host
     char *hostname;                                 //For storing host name
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
 
     /* check command line arguments */
     if (argc != 4) {
-       fprintf(stderr,"usage: %s <hostname> <port>\n", argv[0]);
+       fprintf(stderr,"usage: %s <hostname> <port> <path of stats file>\n", argv[0]);
        exit(0);
     }
 
@@ -77,8 +77,9 @@ int main(int argc, char **argv) {
     serveraddr.sin_port = htons(portno);
 
     /* connect: create a connection with the server */
+    
     if (connect(sockfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) < 0) 
-      error("ERROR connecting");
+      error("ERROR connecting\n");
 
 
     //Time now to send a large file
@@ -89,13 +90,10 @@ int main(int argc, char **argv) {
     //     return 0;
     // }
     /* File to write the output TCP parameters */
+
     char filepath[1024];
     filepath[0]='\0';
-    strcat(filepath,"/home/susan/Desktop/BTP/Client/");
     strcat(filepath,argv[3]);
-    strcat(filepath,"/stats");
-    strcat(filepath,argv[4]);
-    strcat(filepath,".txt");
 
     FILE *fp_out = fopen(filepath, "w+");
     if(fp_out == NULL){
@@ -113,11 +111,11 @@ int main(int argc, char **argv) {
     i = 1;
     while(i <= 1000000){
 
-        if(send(sockfd, buf, read_block, 0) < 0){
+        if(send(sockfd, buf, BUFSIZE, 0) < 0){
             printf("Error in sending file\n");
             break;
         }
-        bzero(buf, BUFSIZE);
+        // bzero(buf, BUFSIZE);
 
         //Use get sock opt to get tcp parameters at this point of time
         tcp_info_length = sizeof(tcp_info);
