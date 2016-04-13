@@ -9,16 +9,6 @@ import signal
 
 def main(run):
 
-	# run = 0
-
-	# if (not(os.path.isfile("./run.txt"))):
-	# 	with open("run.txt","w") as f:
-	# 		f.write("1")
-
-	# with open("run.txt","r") as f:
-	# 	run = int(f.readline())
-
-
 	with open("/home/susan/Desktop/BTP/Server/log.txt","a+") as f:
 		f.write("Start " + str(run) + "\n")
 
