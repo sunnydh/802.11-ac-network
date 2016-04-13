@@ -132,8 +132,8 @@ int main(int argc, char **argv)
 			// fp = fopen("/home/sunman/Downloads/ca.mkv","w+");
 
 			// fprintf(statistics,"File transfer start for %s\n",argv[3]);
-			printf("File transfer start for %s\n",argv[4]);
-
+			// printf("File transfer start for %s\n",argv[4]);
+			printf("Transfer starts\n");
 			get_now( &time_start, opt_debug );
 			while ((recv_bytes = recv(new_fd, tcp_buffer, opt_buffer, 0)) > 0){
 				
@@ -167,7 +167,7 @@ int main(int argc, char **argv)
 			}
 
 			// fprintf(statistics, "File transfer ends %s\n", argv[3]);
-			printf("File transfer ends %s\n", argv[4]);
+			printf("File transfer ends\n");
 			free(tcp_buffer);
 			close(new_fd);  fclose(statistics);
 			// fclose(fp);
