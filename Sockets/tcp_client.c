@@ -50,8 +50,11 @@ int main(int argc, char **argv) {
     /* check command line arguments */
     if (argc != 4) {
        fprintf(stderr,"usage: %s <hostname> <port> <path of stats file>\n", argv[0]);
+       printf("Here it comes\n");
        exit(0);
     }
+
+
 
     /* get host name and port number of server */
     hostname = argv[1];
@@ -68,7 +71,6 @@ int main(int argc, char **argv) {
         fprintf(stderr,"ERROR, no such host as %s\n", hostname);
         exit(0);
     }
-
     /* build the server's Internet address */
     bzero((char *) &serveraddr, sizeof(serveraddr));
     serveraddr.sin_family = AF_INET;
@@ -77,7 +79,7 @@ int main(int argc, char **argv) {
     serveraddr.sin_port = htons(portno);
 
     /* connect: create a connection with the server */
-    
+    printf("connection mades\n");
     if (connect(sockfd, (struct sockaddr *)&serveraddr, sizeof(serveraddr)) < 0) 
       error("ERROR connecting\n");
 
@@ -94,6 +96,8 @@ int main(int argc, char **argv) {
     char filepath[1024];
     filepath[0]='\0';
     strcat(filepath,argv[3]);
+
+    printf("%s\n", filepath );
 
     FILE *fp_out = fopen(filepath, "w+");
     if(fp_out == NULL){

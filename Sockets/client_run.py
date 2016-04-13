@@ -32,6 +32,7 @@ def main(run, band, variant):
 	first = subprocess.Popen(shlex.split(cmd), stderr=f_err, stdout=f_out)
 	time.sleep(2)
 	path = "/home/susan/Desktop/BTP/Client/" + band + "/" + variant + "/stats" + str(run) + ".txt"
+	print path
 	second = subprocess.Popen(['/home/susan/Desktop/BTP/802.11-ac-network/Sockets/client.o', ip, port, path])
 	
 	second.wait()
